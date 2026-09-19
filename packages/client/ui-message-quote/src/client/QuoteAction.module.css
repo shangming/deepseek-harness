@@ -1,0 +1,18 @@
+/* Names this composer's place in the document without occupying any of it; the
+   action itself portals to the document root and so cannot find it by ancestry. */
+.marker {
+  display: none;
+}
+
+/* The floating action anchors its bottom center to the selection's first line,
+   so the recorded viewport point is the element's left/top rather than a
+   measured offset. */
+.anchor {
+  position: fixed;
+  z-index: 20;
+  transform: translate(-50%, calc(-100% - 8px));
+}
+
+.action {
+  box-shadow: var(--dsw-elevation-prominent);
+}

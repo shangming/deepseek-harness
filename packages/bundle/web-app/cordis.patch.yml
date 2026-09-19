@@ -347,6 +347,11 @@
     - id: ui-message-feedback
       name: '@deepseek-ai/dsh-client-ui-message-feedback'
 
+    # The quote surface: the floating action over a transcript selection that
+    # writes the selected text into the composer as a Markdown blockquote.
+    - id: ui-message-quote
+      name: '@deepseek-ai/dsh-client-ui-message-quote'
+
     # Model selection: the /model popupSelect + composer seat over session.models.
     - id: ui-model-selection
       name: '@deepseek-ai/dsh-client-ui-model-selection'
