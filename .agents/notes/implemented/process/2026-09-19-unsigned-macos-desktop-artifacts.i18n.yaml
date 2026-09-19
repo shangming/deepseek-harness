@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/process/2026-09-19-unsigned-macos-desktop-artifacts.md
+2026-09-19-unsigned-macos-desktop-artifacts.md: 2e5a4abfbca996b4b7d9723457fa6736dd1be563
+2026-09-19-unsigned-macos-desktop-artifacts.zh.md: c34e975a2a9021dacd199277f21d4870fe00edc2

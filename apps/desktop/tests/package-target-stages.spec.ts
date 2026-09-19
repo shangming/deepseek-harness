@@ -53,3 +53,15 @@ it.each(['--unsigned', '--prepare-only'])('keeps %s hardware-free and creates no
   for (const call of run.run.mock.calls) expect(call[3].env).not.toHaveProperty('DSH_DESKTOP_WINDOWS_TOKEN_PIN')
   expect(writeFileSync).not.toHaveBeenCalled()
 })
+
+it('builds unsigned macOS artifacts without signing, notarization, or release records', async () => {
+  const { run, stages } = supervisor()
+  await packageTarget(parseDesktopPackageInvocation(['mac-arm64', '--unsigned'], 'darwin', 'arm64'), environment, run)
+  expect(stages.at(-1)).toBe('exec electron-builder --config electron-builder.config.mjs --mac --arm64 --publish never')
+  const prepareDsh = run.run.mock.calls.find(call => call[0] === 'run prepare:dsh')
+  expect(prepareDsh?.[3].env).toMatchObject({ DSH_DESKTOP_TARGET_PLATFORM: 'darwin', DSH_DESKTOP_UNSIGNED: '1' })
+  const builder = run.run.mock.calls.at(-1)
+  expect(builder?.[3].env).toMatchObject({ DSH_DESKTOP_UNSIGNED: '1', CSC_IDENTITY_AUTO_DISCOVERY: 'false' })
+  expect(builder?.[3].env).not.toHaveProperty('CSC_LINK')
+  expect(writeFileSync).not.toHaveBeenCalled()
+})

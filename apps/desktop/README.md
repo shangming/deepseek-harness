@@ -116,7 +116,7 @@ Version derivation does not change the fixed update channel or `nightly.yml` / `
 
 Packaging, upload, and manual macOS signature verification read `apps/desktop/.env.windows` or `.env.macos`, selected by target platform. Copy the [Windows template](.env.windows.example) or [macOS template](.env.macos.example) and fill in the local settings; Git ignores both local files, and packaged artifacts exclude them. Release fields come only from the target file, without fallback to system or shell variables; `PATH`, proxies, and build-tool settings remain inherited. Files use UTF-8 with optional BOM; relative certificate, SignTool, Apple API key, and keychain paths resolve from `apps/desktop`, values are not shell-expanded, and passwords containing `#` or spaces need quotes. CI also creates the target file before invoking packaging.
 
-Every package command checks the application ID, update origin, and mode-specific signing configuration before building or downloading. macOS checks the identity, Team ID, one complete notarization strategy, readable local `CSC_LINK` p12 file, explicit `CSC_KEY_PASSWORD`, and referenced API key and keychain files; Windows checks the public code-signing certificate, SignTool file, container name, and PIN format. Windows preparation-only and explicit unsigned builds do not require signing credentials. Configuration checks do not authenticate the PIN, log in to the token, unlock a keychain, or contact Apple; actual signing and notarization perform those checks. Run the same checks separately:
+Every package command checks the application ID, update origin, and mode-specific signing configuration before building or downloading. macOS checks the identity, Team ID, one complete notarization strategy, readable local `CSC_LINK` p12 file, explicit `CSC_KEY_PASSWORD`, and referenced API key and keychain files; Windows checks the public code-signing certificate, SignTool file, container name, and PIN format. Windows preparation-only and unsigned builds, and macOS explicit unsigned builds, do not require signing credentials. Configuration checks do not authenticate the PIN, log in to the token, unlock a keychain, or contact Apple; actual signing and notarization perform those checks. Run the same checks separately:
 
 ```sh
 pnpm --dir apps/desktop run check:package
@@ -197,6 +197,16 @@ pnpm run package:desktop:win:x64:unsigned
 ```
 
 The command requires `DSH_DESKTOP_APP_ID` and the normal build dependencies, including Python and Visual C++ build tools for native modules. Set `PYTHON` to the Python executable when it is absent from `PATH`. It writes the installer to `.desktop-build/targets/win-x64/unsigned-artifacts/`, omits automatic-update configuration, strips signing credentials, and creates no release completion record. It does not require EV credentials or an update origin. The signed packaging and upload commands retain their release requirements.
+
+### Unsigned macOS test application
+
+On macOS, append `--unsigned` to a macOS target command to build a local application without an Apple identity:
+
+```sh
+pnpm run package:desktop:mac:arm64:unsigned
+```
+
+The command requires the shared settings in `.env.macos`; signing and notarization fields can stay empty. It writes `dmg` and `zip` artifacts to `.desktop-build/targets/mac-<arch>/unsigned-artifacts/`, keeps vendor signatures on the bundled native runtime, omits automatic-update configuration, and creates no release completion record. The application runs locally but is not distributable: Gatekeeper rejects it on other Macs, and the signed packaging and upload commands retain their release requirements.
 
 ### Windows installer interface
 
