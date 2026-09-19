@@ -485,6 +485,17 @@ describe('desktop main startup', () => {
     sender.mainFrame.url = original
   })
 
+  it('serves the shell documents that packaged confirmation windows load', async () => {
+    await readyForUpdate()
+    const { protocol } = await import('electron')
+    const { serveWebDocument } = await import('../src/web-document.ts')
+    const handler = vi.mocked(protocol.handle).mock.calls[0]![1]
+    const request = new Request('dsh-app://shell/update-dialog.html')
+    vi.mocked(serveWebDocument).mockClear()
+    await handler(request)
+    expect(serveWebDocument).toHaveBeenCalledWith(request, join('desktop-test-app', 'renderer'))
+  })
+
   it.each(['darwin', 'win32', 'linux'] as const)('limits native titlebar styling to macOS on %s', async (platform) => {
     vi.spyOn(process, 'platform', 'get').mockReturnValue(platform)
     await import('../src/main.ts')

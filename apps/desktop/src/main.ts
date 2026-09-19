@@ -407,6 +407,8 @@ async function main(): Promise<void> {
       }
       return forwardWebRequest(request, hostUrl, hostCookie)
     }
+    // Shell documents (update dialog, mandatory update, policy login) load beside the shell entry point.
+    if (url.hostname === 'shell') return serveWebDocument(request, join(app.getAppPath(), 'renderer'))
     return Promise.resolve(new Response(null, { status: 404 }))
   })
 
